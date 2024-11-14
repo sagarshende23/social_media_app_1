@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:social_media_app_1/features/auth/presentation/screens/login_screen.dart';
 import 'package:social_media_app_1/features/auth/presentation/screens/register_screen.dart';
+import 'package:social_media_app_1/features/auth/presentation/screens/profile_screen.dart';
+import 'package:social_media_app_1/features/auth/presentation/screens/edit_profile_screen.dart';
 import 'package:social_media_app_1/features/feed/presentation/screens/feed_screen.dart';
 import 'package:social_media_app_1/features/post/presentation/screens/create_post_screen.dart';
 import 'package:social_media_app_1/features/group/presentation/screens/group_list_screen.dart';
@@ -37,6 +39,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const RegisterScreen(),
       ),
       GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfileScreen(),
+      ),
+      GoRoute(
         path: '/create-post',
         builder: (context, state) => const CreatePostScreen(),
       ),
@@ -56,6 +62,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/groups/:id',
         builder: (context, state) => const GroupDetailsScreen(),
+      ),
+      GoRoute(
+        path: '/editProfile',
+        builder: (context, state) => const EditProfileScreen(),
       ),
     ],
   );

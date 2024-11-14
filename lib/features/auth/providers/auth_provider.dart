@@ -1,7 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide Provider;
+import 'package:gotrue/src/types/provider.dart' as supabase_provider;
 
-final supabase = Supabase.instance.client;
+final supabaseClient = Supabase.instance.client;
 
 class AuthState {
   final User? user;
@@ -33,7 +34,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   void _initialize() {
-    final session = supabase.auth.currentSession;
+    final session = supabaseClient.auth.currentSession;
     if (session != null) {
       state = AuthState(
         user: session.user,
@@ -41,9 +42,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
     }
 
-    supabase.auth.onAuthStateChange.listen((data) {
-      final AuthChangeEvent event = data.event;
-      final Session? session = data.session;
+    supabaseClient.auth.onAuthStateChange.listen((data) {
+      final event = data.event;
+      final session = data.session;
 
       switch (event) {
         case AuthChangeEvent.signedIn:
@@ -65,7 +66,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> signIn(String email, String password) async {
     try {
-      final response = await supabase.auth.signInWithPassword(
+      final response = await supabaseClient.auth.signInWithPassword(
         email: email,
         password: password,
       );
@@ -80,9 +81,24 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  Future<void> signInWithGoogle() async {
+    try {
+      final response = await supabaseClient.auth.signInWithOAuth(
+        supabase_provider.Provider.google,
+        redirectTo: 'io.supabase.flutterquickstart://login-callback/',
+      );
+
+      if (!response) {
+        throw Exception('Google sign in failed');
+      }
+    } catch (e) {
+      state = state.copyWith(error: e.toString());
+    }
+  }
+
   Future<void> signUp(String email, String password) async {
     try {
-      final response = await supabase.auth.signUp(
+      final response = await supabaseClient.auth.signUp(
         email: email,
         password: password,
       );
@@ -98,7 +114,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   Future<void> signOut() async {
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     state = AuthState();
   }
 }

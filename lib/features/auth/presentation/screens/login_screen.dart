@@ -31,6 +31,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
   }
 
+  Future<void> _signInWithGoogle() async {
+    await ref.read(authProvider.notifier).signInWithGoogle();
+  }
+
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
@@ -76,6 +80,23 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 onPressed: _login,
                 child: const Text('Login'),
               ),
+              const SizedBox(height: 16),
+              const Text('OR'),
+              const SizedBox(height: 16),
+              ElevatedButton.icon(
+                onPressed: _signInWithGoogle,
+                icon: Image.network(
+                  'https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg',
+                  height: 24,
+                ),
+                label: const Text('Sign in with Google'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black87,
+                  elevation: 1,
+                ),
+              ),
+              const SizedBox(height: 16),
               TextButton(
                 onPressed: () => context.go('/auth/register'),
                 child: const Text('Create an account'),
